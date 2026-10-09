@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="ur">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GharTasalli — Admin Panel (Private)</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'Segoe UI',Arial,sans-serif; background:#eef3f1; color:#222; line-height:1.5; }
+  header { background:#c62828; color:#fff; padding:16px 20px; display:flex; justify-content:space-between; align-items:center; position:sticky; top:0; z-index:10; }
+  header h1 { font-size:1.2rem; }
+  .lock-note { font-size:.75rem; opacity:.85; }
+  .tabs { display:flex; background:#fff; box-shadow:0 2px 6px rgba(0,0,0,.08); position:sticky; top:57px; z-index:9; }
+  .tabs button { flex:1; border:0; background:#fff; padding:14px; font-size:1rem; font-weight:bold; color:#666; cursor:pointer; border-bottom:3px solid transparent; }
+  .tabs button.active { color:#c62828; border-bottom-color:#c62828; }
+  .wrap { max-width:900px; margin:0 auto; padding:18px; }
+  .page { display:none; } .page.active { display:block; }
+  .stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:12px; margin-bottom:18px; }
+  .stat { background:#fff; border-radius:12px; padding:16px; text-align:center; box-shadow:0 2px 8px rgba(0,0,0,.06); }
+  .stat .v { font-size:1.7rem; font-weight:bold; color:#c62828; }
+  .stat .l { font-size:.85rem; color:#666; }
+  .card { background:#fff; border-radius:12px; padding:18px; box-shadow:0 2px 8px rgba(0,0,0,.06); margin-bottom:14px; }
+  .card h3 { color:#c62828; margin-bottom:12px; }
+  label { display:block; font-size:.85rem; font-weight:bold; color:#444; margin:10px 0 4px; }
+  input, select, textarea { width:100%; padding:10px 12px; border:1px solid #ccc; border-radius:8px; font-size:1rem; font-family:inherit; }
+  .row { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .btn { display:inline-block; border:0; cursor:pointer; background:#c62828; color:#fff; font-weight:bold; padding:12px 24px; border-radius:10px; font-size:1rem; margin-top:14px; }
+  .btn:hover { background:#b71c1c; }
+  .btn.green { background:#25D366; } .btn.green:hover { background:#1eb85a; }
+  .btn.red { background:#e05252; } .btn.red:hover { background:#c74444; }
+  .btn.small { padding:7px 14px; font-size:.85rem; margin:4px 4px 0 0; }
+  .btn.grey { background:#888; }
+  .wcard { border-left:4px solid #c62828; }
+  .wcard.inactive { opacity:.55; border-left-color:#aaa; }
+  .wcard .nm { font-weight:bold; font-size:1.1rem; }
+  .wcard .srv { display:inline-block; background:#ffebee; color:#c62828; font-size:.8rem; font-weight:bold; padding:3px 10px; border-radius:12px; margin:6px 0; }
+  .wcard .dt { font-size:.9rem; color:#555; }
+  .wcard .dt b { color:#333; }
+  .bcard { border-left:4px solid #ffc93c; }
+  .bcard.assigned { border-left-color:#25D366; }
+  .bcard.done { border-left-color:#888; opacity:.7; }
+  .pill { display:inline-block; font-size:.78rem; font-weight:bold; padding:3px 10px; border-radius:12px; color:#fff; }
+  .pill.new { background:#e8a13c; } .pill.assigned { background:#25D366; } .pill.done { background:#888; }
+  .fee-paid { color:#c62828; font-weight:bold; } .fee-due { color:#c74444; font-weight:bold; }
+  .filterbar { display:flex; gap:10px; margin-bottom:14px; flex-wrap:wrap; }
+  .filterbar input, .filterbar select { flex:1; min-width:150px; }
+  #pinScreen { position:fixed; inset:0; background:#c62828; display:flex; align-items:center; justify-content:center; z-index:100; }
+  #pinBox { background:#fff; border-radius:16px; padding:32px; text-align:center; width:90%; max-width:340px; }
+  #pinBox h2 { color:#c62828; margin-bottom:6px; }
+  #pinBox p { color:#666; font-size:.9rem; margin-bottom:16px; }
+  #pinBox input { text-align:center; font-size:1.4rem; letter-spacing:8px; }
+  .hint { font-size:.82rem; color:#777; margin-top:10px; }
+  @media(max-width:520px){ .row{grid-template-columns:1fr;} }
+</style>
+</head>
+<body>
+
+<div id="pinScreen">
+  <div id="pinBox">
+    <h2>🔒 Private Panel</h2>
+    <p>Sirf admin ke liye — PIN dalein<br><span style="font-size:.78rem">(pehli baar: 1234)</span></p>
+    <input type="password" id="pinInput" maxlength="8" inputmode="numeric" placeholder="••••">
+    <button class="btn" style="width:100%" onclick="unlock()">Kholein</button>
+    <p class="hint">PIN badalne ke liye Dashboard me "PIN badlein" dabayein.</p>
+  </div>
+</div>
+
+<header>
+  <h1>🛠️ GharTasalli — Admin</h1>
+  <span class="lock-note">🔒 Private — customers ko link mat dein</span>
+</header>
+
+<div class="tabs">
+  <button class="active" onclick="tab('dash',this)">📊 Dashboard</button>
+  <button onclick="tab('workers',this)">👷 Karigar</button>
+  <button onclick="tab('bookings',this)">📝 Bookings</button>
+</div>
+
+<div class="wrap">
+
+  <!-- DASHBOARD -->
+  <div id="pg-dash" class="page active">
+    <div class="stats">
+      <div class="stat"><div class="v" id="stWorkers">0</div><div class="l">Total Karigar</div></div>
+      <div class="stat"><div class="v" id="stBookings">0</div><div class="l">Total Bookings</div></div>
+      <div class="stat"><div class="v" id="stPending">0</div><div class="l">Pending</div></div>
+      <div class="stat"><div class="v" id="stFees">0</div><div class="l">Fee Jama (PKR)</div></div>
+    </div>
+    <div class="card">
+      <h3>⚙️ Settings</h3>
+      <button class="btn small grey" onclick="changePin()">PIN badlein</button>
+      <button class="btn small red" onclick="resetAll()">Sara data delete karein</button>
+      <p class="hint">Data isi browser me save hota hai. Dusre phone/computer par chalane ke liye baad me online database lagayenge.</p>
+    </div>
+  </div>
+
+  <!-- WORKERS -->
+  <div id="pg-workers" class="page">
+    <div class="card">
+      <h3>➕ Naya Karigar Add Karein</h3>
+      <div class="row">
+        <div><label>Naam *</label><input id="wName" placeholder="Muhammad Ali"></div>
+        <div><label>Father Name</label><input id="wFname" placeholder="Muhammad Ahmed"></div>
+      </div>
+      <div class="row">
+        <div><label>Age</label><input id="wAge" type="number" placeholder="30"></div>
+        <div><label>Service *</label><select id="wService"></select></div>
+      </div>
+      <div class="row">
+        <div><label>Phone Number *</label><input id="wPhone" placeholder="03351234567"></div>
+        <div><label>WhatsApp Number</label><input id="wWa" placeholder="03351234567"></div>
+      </div>
+      <label>Address</label><input id="wAddr" placeholder="Mohalla, Road">
+      <div class="row">
+        <div><label>City / Area</label><input id="wArea" placeholder="Quetta — Satellite Town"></div>
+        <div><label>Note</label><input id="wNote" placeholder="tajurba, timing..."></div>
+      </div>
+      <button class="btn" onclick="addWorker()">Karigar Save Karein</button>
+    </div>
+    <div class="filterbar">
+      <select id="fService" onchange="renderWorkers()"><option value="">Sab services</option></select>
+      <input id="fSearch" placeholder="Naam se dhoondein..." oninput="renderWorkers()">
+    </div>
+    <div id="workerList"></div>
+  </div>
+
+  <!-- BOOKINGS -->
+  <div id="pg-bookings" class="page">
+    <div class="card">
+      <h3>➕ Nai Booking</h3>
+      <div class="row">
+        <div><label>Customer Naam *</label><input id="bCust" placeholder="Ahmed Khan"></div>
+        <div><label>Customer Phone *</label><input id="bPhone" placeholder="03357654321"></div>
+      </div>
+      <label>Full Address (City + Mohalla + Ghar) *</label><input id="bAddr" placeholder="Quetta, Satellite Town, Gali 4, House 12">
+      <div class="row">
+        <div><label>Service *</label><select id="bService"></select></div>
+        <div><label>150 Fee mili?</label><select id="bFee"><option value="no">Nahi — pending</option><option value="yes">Haan — mil gayi</option></select></div>
+      </div>
+      <button class="btn" onclick="addBooking()">Booking Save Karein</button>
+    </div>
+    <div id="bookingList"></div>
+  </div>
+
+</div>
+
+<script>
+const SERVICES = ["Plumber","Electrician","AC & Fridge Repair","Washing Machine Repair","Carpenter","Furniture Installation","Mobile & Computer Repair","RO Filter Service","Solar Panel Service","CCTV Installation","Internet & Wi-Fi Installation","Geyser Repair","Locksmith","Dish Antenna Setting","UPS / Generator Repair","Mason (Mistri)","Home Cleaning","Pest Control","Laundry Pickup & Delivery","Car Wash at Home","Gardener","Sweeper","Naali / Sewer Safai","Water Tank Safai","Mochi","Home Barber","Home Tuition","Quran Teacher","Computer Teacher","English Language Tutor","Computer & Mobile Training","Home Cook","Home Shifting & Loader","Event Decoration","Photographer & Videographer"];
+const KEY = "kaamwala_admin_v1";
+let DB = load();
+function load(){ try { const d = JSON.parse(localStorage.getItem(KEY)); if(d && d.workers) return d; } catch(e){} return {workers:[], bookings:[], pin:"1234"}; }
+function save(){ localStorage.setItem(KEY, JSON.stringify(DB)); }
+function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
+function esc(s){ return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+function waNum(n){ n = String(n||"").replace(/\D/g,""); if(n.startsWith("0")) n = "92"+n.slice(1); if(n.startsWith("92") && n.length>=11) return n; return ""; }
+
+// PIN
+function unlock(){ const v = document.getElementById("pinInput").value; if(v === DB.pin){ document.getElementById("pinScreen").style.display="none"; } else { alert("Ghalat PIN!"); } }
+document.getElementById("pinInput").addEventListener("keydown", e=>{ if(e.key==="Enter") unlock(); });
+function changePin(){ const p = prompt("Naya PIN likhein (4-8 digits):"); if(p && /^\d{4,8}$/.test(p)){ DB.pin=p; save(); alert("PIN badal gaya!"); } else if(p!==null){ alert("PIN 4-8 digits ka hona chahiye."); } }
+function resetAll(){ if(confirm("SARA data delete ho jayega! Pakka?")){ localStorage.removeItem(KEY); location.reload(); } }
+
+// Tabs
+function tab(name, btn){ document.querySelectorAll(".page").forEach(p=>p.classList.remove("active")); document.getElementById("pg-"+name).classList.add("active"); document.querySelectorAll(".tabs button").forEach(b=>b.classList.remove("active")); btn.classList.add("active"); if(name==="dash") renderDash(); }
+
+// Workers
+function addWorker(){
+  const name = document.getElementById("wName").value.trim();
+  const phone = document.getElementById("wPhone").value.trim();
+  const service = document.getElementById("wService").value;
+  if(!name || !phone || !service){ alert("Naam, Phone aur Service zaroori hai!"); return; }
+  DB.workers.push({ id:uid(), name, fname:document.getElementById("wFname").value.trim(), age:document.getElementById("wAge").value.trim(), phone, whatsapp:document.getElementById("wWa").value.trim()||phone, address:document.getElementById("wAddr").value.trim(), area:document.getElementById("wArea").value.trim(), service, note:document.getElementById("wNote").value.trim(), active:true });
+  save(); ["wName","wFname","wAge","wPhone","wWa","wAddr","wArea","wNote"].forEach(i=>document.getElementById(i).value="");
+  renderWorkers(); renderDash(); alert("Karigar save ho gaya! ✅");
+}
+function toggleWorker(id){ const w = DB.workers.find(x=>x.id===id); w.active=!w.active; save(); renderWorkers(); renderDash(); }
+function delWorker(id){ if(confirm("Ye karigar delete karein?")){ DB.workers = DB.workers.filter(x=>x.id!==id); save(); renderWorkers(); renderDash(); } }
+function renderWorkers(){
+  const fs = document.getElementById("fService").value, q = document.getElementById("fSearch").value.toLowerCase();
+  const list = DB.workers.filter(w => (!fs || w.service===fs) && (!q || w.name.toLowerCase().includes(q)));
+  const el = document.getElementById("workerList");
+  if(!list.length){ el.innerHTML = '<div class="card"><p style="color:#777">Koi karigar nahi mila. Upar form se add karein.</p></div>'; return; }
+  el.innerHTML = list.map(w=>{
+    const wa = waNum(w.whatsapp);
+    return `<div class="card wcard ${w.active?"":"inactive"}">
+      <div class="nm">${esc(w.name)} ${w.active?"":"(off)"}</div>
+      <div class="srv">${esc(w.service)}</div>
+      <div class="dt"><b>Father:</b> ${esc(w.fname)||"—"} &nbsp; <b>Age:</b> ${esc(w.age)||"—"}</div>
+      <div class="dt"><b>Phone:</b> <a href="tel:${esc(w.phone)}">${esc(w.phone)}</a> &nbsp; <b>WhatsApp:</b> ${esc(w.whatsapp)}</div>
+      <div class="dt"><b>Address:</b> ${esc(w.address)||"—"} ${esc(w.area)?"("+esc(w.area)+")":""}</div>
+      ${w.note?`<div class="dt"><b>Note:</b> ${esc(w.note)}</div>`:""}
+      <div style="margin-top:8px">
+        <a class="btn small green" href="tel:${esc(w.phone)}">📞 Call</a>
+        ${wa?`<a class="btn small green" target="_blank" href="https://wa.me/${wa}?text=${encodeURIComponent("Assalam o Alaikum! GharTasalli se booking hai.")}">💬 WhatsApp</a>`:""}
+        <button class="btn small grey" onclick="toggleWorker('${w.id}')">${w.active?"Off karein":"On karein"}</button>
+        <button class="btn small red" onclick="delWorker('${w.id}')">Delete</button>
+      </div></div>`;
+  }).join("");
+}
+
+// Bookings
+function addBooking(){
+  const customer = document.getElementById("bCust").value.trim();
+  const phone = document.getElementById("bPhone").value.trim();
+  const address = document.getElementById("bAddr").value.trim();
+  const service = document.getElementById("bService").value;
+  if(!customer || !phone || !address || !service){ alert("Customer naam, phone, address aur service zaroori hai!"); return; }
+  DB.bookings.unshift({ id:uid(), customer, phone, address, service, feeReceived:document.getElementById("bFee").value==="yes", workerId:null, status:"new", createdAt:new Date().toLocaleString("en-PK") });
+  save(); ["bCust","bPhone","bAddr"].forEach(i=>document.getElementById(i).value=""); document.getElementById("bFee").value="no";
+  renderBookings(); renderDash(); alert("Booking save ho gayi! ✅");
+}
+function assignWorker(bid, wid){ const b = DB.bookings.find(x=>x.id===bid); b.workerId = wid||null; b.status = wid?"assigned":"new"; save(); renderBookings(); renderDash(); }
+function setStatus(bid, st){ const b = DB.bookings.find(x=>x.id===bid); b.status = st; save(); renderBookings(); renderDash(); }
+function toggleFee(bid){ const b = DB.bookings.find(x=>x.id===bid); b.feeReceived = !b.feeReceived; save(); renderBookings(); renderDash(); }
+function delBooking(id){ if(confirm("Ye booking delete karein?")){ DB.bookings = DB.bookings.filter(x=>x.id!==id); save(); renderBookings(); renderDash(); } }
+function workerOpts(service, sel){
+  const ws = DB.workers.filter(w=>w.service===service && w.active);
+  if(!ws.length) return '<option value="">(koi active karigar nahi)</option>';
+  return '<option value="">— karigar chunein —</option>' + ws.map(w=>`<option value="${w.id}" ${w.id===sel?"selected":""}>${esc(w.name)} (${esc(w.area||"")})</option>`).join("");
+}
+function renderBookings(){
+  const el = document.getElementById("bookingList");
+  if(!DB.bookings.length){ el.innerHTML = '<div class="card"><p style="color:#777">Koi booking nahi. Upar form se add karein.</p></div>'; return; }
+  el.innerHTML = DB.bookings.map(b=>{
+    const w = DB.workers.find(x=>x.id===b.workerId);
+    const pill = b.status==="new"?"new":b.status==="assigned"?"assigned":"done";
+    const pillTx = b.status==="new"?"NAI":b.status==="assigned"?"ASSIGNED":"DONE";
+    const wa = waNum(w?w.whatsapp:"");
+    return `<div class="card bcard ${b.status}">
+      <div style="display:flex;justify-content:space-between;align-items:center"><b>${esc(b.customer)}</b><span class="pill ${pill}">${pillTx}</span></div>
+      <div class="dt" style="font-size:.9rem;color:#555;margin:6px 0"><b>Service:</b> ${esc(b.service)} &nbsp; <b>Fee:</b> <span class="${b.feeReceived?"fee-paid":"fee-due"}">${b.feeReceived?"✅ mili":"❌ pending"}</span></div>
+      <div class="dt" style="font-size:.9rem;color:#555"><b>Phone:</b> <a href="tel:${esc(b.phone)}">${esc(b.phone)}</a></div>
+      <div class="dt" style="font-size:.9rem;color:#555"><b>Address:</b> ${esc(b.address)}</div>
+      <div class="dt" style="font-size:.85rem;color:#888">Booked: ${esc(b.createdAt)}</div>
+      <div style="margin-top:10px">
+        <label style="margin:0 0 4px">Karigar assign karein:</label>
+        <select onchange="assignWorker('${b.id}', this.value)">${workerOpts(b.service, b.workerId)}</select>
+      </div>
+      ${w?`<div class="dt" style="margin-top:8px;font-size:.9rem">👷 <b>${esc(w.name)}</b> — <a href="tel:${esc(w.phone)}">${esc(w.phone)}</a>
+        ${wa?` <a class="btn small green" target="_blank" href="https://wa.me/${wa}?text=${encodeURIComponent("Assalam o Alaikum "+w.name+"! GharTasalli booking: "+b.service+" — Customer: "+b.customer+", Address: "+b.address)}">💬 Kaam bhejein</a>`:""}</div>`:""}
+      <div style="margin-top:8px">
+        <button class="btn small grey" onclick="toggleFee('${b.id}')">${b.feeReceived?"Fee wapas pending":"Fee mil gayi"}</button>
+        ${b.status!=="done"?`<button class="btn small green" onclick="setStatus('${b.id}','done')">✔️ Done</button>`:`<button class="btn small grey" onclick="setStatus('${b.id}','assigned')">↩️ Reopen</button>`}
+        <button class="btn small red" onclick="delBooking('${b.id}')">Delete</button>
+      </div></div>`;
+  }).join("");
+}
+
+// Dashboard
+function renderDash(){
+  document.getElementById("stWorkers").textContent = DB.workers.filter(w=>w.active).length;
+  document.getElementById("stBookings").textContent = DB.bookings.length;
+  document.getElementById("stPending").textContent = DB.bookings.filter(b=>b.status!=="done").length;
+  document.getElementById("stFees").textContent = DB.bookings.filter(b=>b.feeReceived).length * 150;
+}
+
+// init
+(function(){
+  const opts = SERVICES.map(s=>`<option>${s}</option>`).join("");
+  document.getElementById("wService").innerHTML = opts;
+  document.getElementById("bService").innerHTML = opts;
+  document.getElementById("fService").innerHTML = '<option value="">Sab services</option>' + opts;
+  renderWorkers(); renderBookings(); renderDash();
+})();
+</script>
+</body>
+</html>
