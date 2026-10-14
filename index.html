@@ -37,9 +37,131 @@
   .final { text-align:center; margin:36px 0 20px; }
   footer { text-align:center; padding:22px; color:#777; font-size:.9rem; }
   @media(max-width:520px){ .hero h1{font-size:1.9rem;} .card p{min-height:0;} }
+
+  .topbar { position:sticky; top:0; z-index:60; background:#b71c1c; color:#fff; display:flex; align-items:center; justify-content:space-between; padding:10px 14px; box-shadow:0 2px 8px rgba(0,0,0,.2); }
+  .topbar .brand { font-weight:bold; font-size:1.15rem; }
+  .topbar button { background:rgba(255,255,255,.15); border:none; color:#fff; font-size:1.3rem; width:42px; height:42px; border-radius:10px; cursor:pointer; }
+  #drawerOverlay { position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:70; display:none; }
+  #drawerOverlay.show { display:block; }
+  #drawer { position:fixed; top:0; left:0; bottom:0; width:272px; background:#fff; z-index:71; transform:translateX(-105%); transition:transform .25s ease; overflow-y:auto; box-shadow:2px 0 12px rgba(0,0,0,.25); }
+  #drawer.open { transform:translateX(0); }
+  .drawer-head { background:#c62828; color:#fff; font-weight:bold; font-size:1.2rem; padding:18px 16px; }
+  #drawer a.dlink { display:block; padding:13px 18px; color:#333; text-decoration:none; border-bottom:1px solid #f0f0f0; font-size:1rem; }
+  #drawer a.dlink:active { background:#ffebee; }
+  .drawer-sep { padding:10px 18px 4px; color:#999; font-size:.78rem; text-transform:uppercase; letter-spacing:1px; }
+  .page-overlay { position:fixed; inset:0; background:#f0f7f4; z-index:80; display:none; overflow-y:auto; }
+  .page-overlay.show { display:block; }
+  .page-head { position:sticky; top:0; background:#c62828; color:#fff; display:flex; align-items:center; gap:12px; padding:12px 14px; z-index:5; }
+  .page-head button { background:rgba(255,255,255,.15); border:none; color:#fff; font-size:1.2rem; width:40px; height:40px; border-radius:10px; cursor:pointer; }
+  .page-head h3 { font-size:1.15rem; }
+  .page-body { max-width:600px; margin:0 auto; padding:18px 16px 40px; }
+  .set-card { background:#fff; border-radius:14px; padding:18px; margin-bottom:14px; box-shadow:0 2px 10px rgba(0,0,0,.08); }
+  .set-card h4 { color:#c62828; margin-bottom:6px; }
+  .set-card p { color:#555; font-size:.92rem; margin-bottom:10px; }
+  .set-card select { width:100%; padding:12px; border:1px solid #ccc; border-radius:10px; font-size:1rem; margin-bottom:10px; font-family:inherit; }
+  .set-card .save-btn { background:#c62828; color:#fff; border:none; padding:10px 26px; border-radius:10px; font-weight:bold; font-size:1rem; cursor:pointer; }
+  .contact-card { background:#fff; border-radius:16px; padding:28px 22px; text-align:center; box-shadow:0 2px 10px rgba(0,0,0,.08); }
+  .contact-card h4 { color:#c62828; margin:12px 0 6px; font-size:1.2rem; }
+  .contact-card p { color:#555; font-size:.95rem; margin-bottom:12px; }
+  .wa-number { font-size:1.7rem; font-weight:bold; color:#1eb85a; letter-spacing:1px; margin-bottom:16px; }
+  .wa-btn { display:inline-flex; align-items:center; gap:10px; background:#25D366; color:#fff; font-weight:bold; text-decoration:none; padding:14px 30px; border-radius:12px; font-size:1.1rem; }
+  .wa-btn svg { width:26px; height:26px; fill:#fff; }
+  .wa-big { width:72px; height:72px; fill:#25D366; }
+  .card .pic { margin:-20px -16px 12px; height:120px; overflow:hidden; border-radius:14px 14px 0 0; background:#f5f5f5; }
+  .card .pic img { width:100%; height:100%; object-fit:cover; display:block; }
 </style>
 </head>
 <body>
+<div class="topbar">
+  <button onclick="openDrawer()" aria-label="Menu">☰</button>
+  <div class="brand">🔧 GharTasalli</div>
+  <button onclick="shareApp()" aria-label="Share">📤</button>
+</div>
+
+<div id="drawerOverlay" onclick="closeDrawer()"></div>
+<nav id="drawer">
+  <div class="drawer-head">🔧 GharTasalli</div>
+  <a class="dlink" href="#" onclick="goHome();return false;">🏠 Home</a>
+  <div class="drawer-sep">Services</div>
+  <a class="dlink" href="#repair" onclick="closeDrawer()">🔧 Ghar ki Repair</a>
+  <a class="dlink" href="#safai" onclick="closeDrawer()">🧹 Safai &amp; Care</a>
+  <a class="dlink" href="#taleem" onclick="closeDrawer()">📚 Taleem</a>
+  <a class="dlink" href="#sehat" onclick="closeDrawer()">🏥 Sehat</a>
+  <a class="dlink" href="#ghar" onclick="closeDrawer()">🏠 Ghar ke Kaam</a>
+  <div class="drawer-sep">App</div>
+  <a class="dlink" href="#" onclick="openSettings();return false;">⚙️ Settings</a>
+  <a class="dlink" href="#" onclick="openContact();return false;">📞 Contact Us</a>
+  <a class="dlink" href="https://play.google.com/store/apps/details?id=com.ghartasalli.app" target="_blank" rel="noopener">⭐ Rate App</a>
+  <a class="dlink" href="#" onclick="shareApp();return false;">📤 Share App</a>
+</nav>
+
+<div id="settingsPage" class="page-overlay">
+  <div class="page-head"><button onclick="closePages()">←</button><h3>⚙️ Settings</h3></div>
+  <div class="page-body">
+    <div class="set-card">
+      <h4>📍 Aapka Sheher</h4>
+      <p>Sheher select karein — booking ke WhatsApp message me sheher khud likha jayega.</p>
+      <select id="citySel">
+        <option value="">— Sheher chunein —</option>
+      <option value="Karachi">Karachi</option>
+      <option value="Lahore">Lahore</option>
+      <option value="Islamabad">Islamabad</option>
+      <option value="Rawalpindi">Rawalpindi</option>
+      <option value="Faisalabad">Faisalabad</option>
+      <option value="Multan">Multan</option>
+      <option value="Peshawar">Peshawar</option>
+      <option value="Quetta">Quetta</option>
+      <option value="Hyderabad">Hyderabad</option>
+      <option value="Sialkot">Sialkot</option>
+      <option value="Gujranwala">Gujranwala</option>
+      <option value="Bahawalpur">Bahawalpur</option>
+      <option value="Sargodha">Sargodha</option>
+      <option value="Abbottabad">Abbottabad</option>
+      <option value="Mardan">Mardan</option>
+      <option value="Sukkur">Sukkur</option>
+      <option value="Larkana">Larkana</option>
+      <option value="Gujrat">Gujrat</option>
+      <option value="Jhelum">Jhelum</option>
+      <option value="Sahiwal">Sahiwal</option>
+      <option value="Okara">Okara</option>
+      <option value="Wah Cantt">Wah Cantt</option>
+      <option value="Mingora (Swat)">Mingora (Swat)</option>
+      <option value="Dera Ghazi Khan">Dera Ghazi Khan</option>
+      <option value="Nawabshah">Nawabshah</option>
+      <option value="Khuzdar">Khuzdar</option>
+      <option value="Turbat">Turbat</option>
+      <option value="Gwadar">Gwadar</option>
+      <option value="Muzaffarabad">Muzaffarabad</option>
+      <option value="Gilgit">Gilgit</option>
+      <option value="Other">Other</option>
+      </select>
+      <button class="save-btn" onclick="saveCity()">Save karein</button>
+    </div>
+    <div class="set-card">
+      <h4>ℹ️ GharTasalli ke baare me</h4>
+      <p>GharTasalli — ghar baithe verified karigar. Repair, Safai, Taleem, Sehat aur Ghar ke Kaam — poore Pakistan me, sirf ghar par service. Sirf PKR 150 booking fee; karigar ki mazdoori kaam dekh kar wahi batayega.</p>
+    </div>
+    <div class="set-card">
+      <h4>🔒 Privacy</h4>
+      <p><a href="privacy-policy.html" style="color:#c62828;font-weight:bold;">Privacy Policy parhein</a></p>
+      <p style="color:#999;font-size:.85rem;">App version 3.0</p>
+    </div>
+  </div>
+</div>
+
+<div id="contactPage" class="page-overlay">
+  <div class="page-head"><button onclick="closePages()">←</button><h3>📞 Contact Us</h3></div>
+  <div class="page-body">
+    <div class="contact-card">
+      <svg class="wa-big" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+      <h4>WhatsApp par rabta karein</h4>
+      <p>Buyers aur service dene wale — koi bhi sawal ho, is number par WhatsApp karein:</p>
+      <div class="wa-number">0334-1302730</div>
+      <a class="wa-btn" href="https://wa.me/923341302730?text=Assalam%20o%20Alaikum!%20Mujhe%20GharTasalli%20ke%20baare%20me%20maloomat%20chahiye."><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg> WhatsApp Karein</a>
+    </div>
+  </div>
+</div>
+
 
 <div class="hero">
   <div class="badge">🛠️ Poore Pakistan me — sirf ghar par service</div>
@@ -55,63 +177,68 @@
   <h2 id="repair">🔧 Ghar ki Repair</h2>
   <p class="cat-sub">Bijli, pani, furniture — har repair ghar baithe</p>
   <div class="grid">
-    <div class="card"><div class="icon">🔧</div><h3>Plumber</h3><p>Nalke, tanki, leakage — har plumbing kaam</p><a class="book" href="https://wa.me/923352710980?text=Assalam%20o%20Alaikum!%20Mujhe%20PLUMBER%20chahiye.%20Naam%3A%20___%20%7C%20Address%3A%20___">Book Karein</a></div>
-    <div class="card"><div class="icon">💡</div><h3>Electrician</h3><p>Wiring, switch, board — bijli ka har kaam</p><a class="book" href="https://wa.me/923352710980?text=Assalam%20o%20Alaikum!%20Mujhe%20ELECTRICIAN%20chahiye.%20Naam%3A%20___%20%7C%20Address%3A%20___">Book Karein</a></div>
-    <div class="card"><div class="icon">❄️</div><h3>AC & Fridge Repair</h3><p>AC service, gas refill, fridge repair</p><a class="book" href="https://wa.me/923352710980?text=Assalam%20o%20Alaikum!%20Mujhe%20AC%20%2F%20FRIDGE%20REPAIR%20chahiye.%20Naam%3A%20___%20%7C%20Address%3A%20___">Book Karein</a></div>
-    <div class="card"><div class="icon">🌀</div><h3>Washing Machine Repair</h3><p>Ghar par machine theek karwayein</p><a class="book" href="https://wa.me/923352710980?text=Assalam%20o%20Alaikum!%20Mujhe%20WASHING%20MACHINE%20REPAIR%20chahiye.%20Naam%3A%20___%20%7C%20Address%3A%20___">Book Karein</a></div>
-    <div class="card"><div class="icon">🪵</div><h3>Carpenter</h3><p>Furniture repair, darwaze, almari</p><a class="book" href="https://wa.me/923352710980?text=Assalam%20o%20Alaikum!%20Mujhe%20CARPENTER%20chahiye.%20Naam%3A%20___%20%7C%20Address%3A%20___">Book Karein</a></div>
-    <div class="card"><div class="icon">🪑</div><h3>Furniture Installation</h3><p>Naya furniture ghar par fit karwayein</p><a class="book" href="https://wa.me/923352710980?text=Assalam%20o%20Alaikum!%20Mujhe%20FURNITURE%20INSTALLATION%20chahiye.%20Naam%3A%20___%20%7C%20Address%3A%20___">Book Karein</a></div>
-    <div class="card"><div class="icon">📲</div><h3>Mobile & Computer Repair</h3><p>Ghar par mobile/laptop theek karwayein</p><a class="book" href="https://wa.me/923352710980?text=Assalam%20o%20Alaikum!%20Mujhe%20MOBILE%20%2F%20COMPUTER%20REPAIR%20chahiye.%20Naam%3A%20___%20%7C%20Address%3A%20___">Book Karein</a></div>
-    <div class="card"><div class="icon">💧</div><h3>RO Filter Service</h3><p>RO plant service aur filter change</p><a class="book" href="https://wa.me/923352710980?text=Assalam%20o%20Alaikum!%20Mujhe%20RO%20FILTER%20SERVICE%20chahiye.%20Naam%3A%20___%20%7C%20Address%3A%20___">Book Karein</a></div>
-    <div class="card"><div class="icon">☀️</div><h3>Solar Panel Service</h3><p>Solar cleaning, maintenance aur repair</p><a class="book" href="https://wa.me/923352710980?text=Assalam%20o%20Alaikum!%20Mujhe%20SOLAR%20PANEL%20SERVICE%20chahiye.%20Naam%3A%20___%20%7C%20Address%3A%20___">Book Karein</a></div>
-    <div class="card"><div class="icon">📹</div><h3>CCTV Installation</h3><p>Ghar/office me CCTV lagwayein</p><a class="book" href="https://wa.me/923352710980?text=Assalam%20o%20Alaikum!%20Mujhe%20CCTV%20INSTALLATION%20chahiye.%20Naam%3A%20___%20%7C%20Address%3A%20___">Book Karein</a></div>
-    <div class="card"><div class="icon">🌐</div><h3>Internet & Wi-Fi Installation</h3><p>Wi-Fi setup aur internet issue hal</p><a class="book" href="https://wa.me/923352710980?text=Assalam%20o%20Alaikum!%20Mujhe%20INTERNET%20%2F%20WIFI%20INSTALLATION%20chahiye.%20Naam%3A%20___%20%7C%20Address%3A%20___">Book Karein</a></div>
-    <div class="card"><div class="icon">🚿</div><h3>Geyser Repair</h3><p>Gas/bijli geyser theek karwayein</p><a class="book" href="https://wa.me/923352710980?text=Assalam%20o%20Alaikum!%20Mujhe%20GEYSER%20REPAIR%20chahiye.%20Naam%3A%20___%20%7C%20Address%3A%20___">Book Karein</a></div>
-    <div class="card"><div class="icon">🔑</div><h3>Locksmith</h3><p>Tala khulwana, naya tala lagwana</p><a class="book" href="https://wa.me/923352710980?text=Assalam%20o%20Alaikum!%20Mujhe%20LOCKSMITH%20chahiye.%20Naam%3A%20___%20%7C%20Address%3A%20___">Book Karein</a></div>
-    <div class="card"><div class="icon">📡</div><h3>Dish Antenna Setting</h3><p>Dish/LNB setting aur repair</p><a class="book" href="https://wa.me/923352710980?text=Assalam%20o%20Alaikum!%20Mujhe%20DISH%20ANTENNA%20SETTING%20chahiye.%20Naam%3A%20___%20%7C%20Address%3A%20___">Book Karein</a></div>
-    <div class="card"><div class="icon">🔌</div><h3>UPS / Generator Repair</h3><p>UPS aur generator theek karwayein</p><a class="book" href="https://wa.me/923352710980?text=Assalam%20o%20Alaikum!%20Mujhe%20UPS%20%2F%20GENERATOR%20REPAIR%20chahiye.%20Naam%3A%20___%20%7C%20Address%3A%20___">Book Karein</a></div>
-    <div class="card"><div class="icon">🧱</div><h3>Mason (Mistri)</h3><p>Deewar, farsh ke chhote kaam</p><a class="book" href="https://wa.me/923352710980?text=Assalam%20o%20Alaikum!%20Mujhe%20MASON%20(MISTRI)%20chahiye.%20Naam%3A%20___%20%7C%20Address%3A%20___">Book Karein</a></div>
+    <div class="card"><div class="pic"><img src="https://images.pexels.com/photos/10961064/pexels-photo-10961064.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=800" alt="Plumber" loading="lazy" onerror="this.parentNode.style.display='none'"></div><div class="icon">🔧</div><h3>Plumber</h3><p>Nalke, tanki, leakage — har plumbing kaam</p><a class="book" href="https://wa.me/923352710980?text=Assalam%20o%20Alaikum!%20Mujhe%20PLUMBER%20chahiye.%20Naam%3A%20___%20%7C%20Address%3A%20___">Book Karein</a></div>
+    <div class="card"><div class="pic"><img src="https://thumb.wikimedia.org/wikipedia/commons/thumb/1/19/Electrician_installing_socket.jpg/960px-Electrician_installing_socket.jpg" alt="Electrician" loading="lazy" onerror="this.parentNode.style.display='none'"></div><div class="icon">💡</div><h3>Electrician</h3><p>Wiring, switch, board — bijli ka har kaam</p><a class="book" href="https://wa.me/923352710980?text=Assalam%20o%20Alaikum!%20Mujhe%20ELECTRICIAN%20chahiye.%20Naam%3A%20___%20%7C%20Address%3A%20___">Book Karein</a></div>
+    <div class="card"><div class="pic"><img src="https://images.pexels.com/photos/5463581/pexels-photo-5463581.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=800" alt="AC &amp; Fridge Repair" loading="lazy" onerror="this.parentNode.style.display='none'"></div><div class="icon">❄️</div><h3>AC & Fridge Repair</h3><p>AC service, gas refill, fridge repair</p><a class="book" href="https://wa.me/923352710980?text=Assalam%20o%20Alaikum!%20Mujhe%20AC%20%2F%20FRIDGE%20REPAIR%20chahiye.%20Naam%3A%20___%20%7C%20Address%3A%20___">Book Karein</a></div>
+    <div class="card"><div class="pic"><img src="https://upload.wikimedia.org/wikipedia/commons/b/b1/Washing_machine_repairs.jpg" alt="Washing Machine Repair" loading="lazy" onerror="this.parentNode.style.display='none'"></div><div class="icon">🌀</div><h3>Washing Machine Repair</h3><p>Ghar par machine theek karwayein</p><a class="book" href="https://wa.me/923352710980?text=Assalam%20o%20Alaikum!%20Mujhe%20WASHING%20MACHINE%20REPAIR%20chahiye.%20Naam%3A%20___%20%7C%20Address%3A%20___">Book Karein</a></div>
+    <div class="card"><div class="pic"><img src="https://thumb.wikimedia.org/wikipedia/commons/thumb/5/56/Carpenter_working_on_an_item_4.jpg/960px-Carpenter_working_on_an_item_4.jpg" alt="Carpenter" loading="lazy" onerror="this.parentNode.style.display='none'"></div><div class="icon">🪵</div><h3>Carpenter</h3><p>Furniture repair, darwaze, almari</p><a class="book" href="https://wa.me/923352710980?text=Assalam%20o%20Alaikum!%20Mujhe%20CARPENTER%20chahiye.%20Naam%3A%20___%20%7C%20Address%3A%20___">Book Karein</a></div>
+    <div class="card"><div class="pic"><img src="https://images.pexels.com/photos/5217135/pexels-photo-5217135.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=800" alt="Furniture Installation" loading="lazy" onerror="this.parentNode.style.display='none'"></div><div class="icon">🪑</div><h3>Furniture Installation</h3><p>Naya furniture ghar par fit karwayein</p><a class="book" href="https://wa.me/923352710980?text=Assalam%20o%20Alaikum!%20Mujhe%20FURNITURE%20INSTALLATION%20chahiye.%20Naam%3A%20___%20%7C%20Address%3A%20___">Book Karein</a></div>
+    <div class="card"><div class="pic"><img src="https://thumb.wikimedia.org/wikipedia/commons/thumb/7/72/A_local_mobile_phone_repairer_in_northern_Ghana.jpg/960px-A_local_mobile_phone_repairer_in_northern_Ghana.jpg" alt="Mobile &amp; Computer Repair" loading="lazy" onerror="this.parentNode.style.display='none'"></div><div class="icon">📲</div><h3>Mobile & Computer Repair</h3><p>Ghar par mobile/laptop theek karwayein</p><a class="book" href="https://wa.me/923352710980?text=Assalam%20o%20Alaikum!%20Mujhe%20MOBILE%20%2F%20COMPUTER%20REPAIR%20chahiye.%20Naam%3A%20___%20%7C%20Address%3A%20___">Book Karein</a></div>
+    <div class="card"><div class="pic"><img src="https://thumb.wikimedia.org/wikipedia/commons/thumb/4/44/Home_water_filters%2C_water_purifiers%2C_and_bottled_water_in_India.jpg/960px-Home_water_filters%2C_water_purifiers%2C_and_bottled_water_in_India.jpg" alt="RO Filter Service" loading="lazy" onerror="this.parentNode.style.display='none'"></div><div class="icon">💧</div><h3>RO Filter Service</h3><p>RO plant service aur filter change</p><a class="book" href="https://wa.me/923352710980?text=Assalam%20o%20Alaikum!%20Mujhe%20RO%20FILTER%20SERVICE%20chahiye.%20Naam%3A%20___%20%7C%20Address%3A%20___">Book Karein</a></div>
+    <div class="card"><div class="pic"><img src="https://thumb.wikimedia.org/wikipedia/commons/thumb/2/21/Three_men_installing_solar_panels_on_a_house.jpg/960px-Three_men_installing_solar_panels_on_a_house.jpg" alt="Solar Panel Service" loading="lazy" onerror="this.parentNode.style.display='none'"></div><div class="icon">☀️</div><h3>Solar Panel Service</h3><p>Solar cleaning, maintenance aur repair</p><a class="book" href="https://wa.me/923352710980?text=Assalam%20o%20Alaikum!%20Mujhe%20SOLAR%20PANEL%20SERVICE%20chahiye.%20Naam%3A%20___%20%7C%20Address%3A%20___">Book Karein</a></div>
+    <div class="card"><div class="pic"><img src="https://images.pexels.com/photos/9942069/pexels-photo-9942069.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=800" alt="CCTV Installation" loading="lazy" onerror="this.parentNode.style.display='none'"></div><div class="icon">📹</div><h3>CCTV Installation</h3><p>Ghar/office me CCTV lagwayein</p><a class="book" href="https://wa.me/923352710980?text=Assalam%20o%20Alaikum!%20Mujhe%20CCTV%20INSTALLATION%20chahiye.%20Naam%3A%20___%20%7C%20Address%3A%20___">Book Karein</a></div>
+    <div class="card"><div class="pic"><img src="https://thumb.wikimedia.org/wikipedia/commons/thumb/6/63/Telecommunications_technician.jpg/960px-Telecommunications_technician.jpg" alt="Internet &amp; Wi-Fi Installation" loading="lazy" onerror="this.parentNode.style.display='none'"></div><div class="icon">🌐</div><h3>Internet & Wi-Fi Installation</h3><p>Wi-Fi setup aur internet issue hal</p><a class="book" href="https://wa.me/923352710980?text=Assalam%20o%20Alaikum!%20Mujhe%20INTERNET%20%2F%20WIFI%20INSTALLATION%20chahiye.%20Naam%3A%20___%20%7C%20Address%3A%20___">Book Karein</a></div>
+    <div class="card"><div class="pic"><img src="https://os-wordpress-media.s3.ap-south-1.amazonaws.com/blog/wp-content/uploads/2022/11/24104944/Geyser-Maintenance-Valve-Leakage-1024x576.jpg" alt="Geyser Repair" loading="lazy" onerror="this.parentNode.style.display='none'"></div><div class="icon">🚿</div><h3>Geyser Repair</h3><p>Gas/bijli geyser theek karwayein</p><a class="book" href="https://wa.me/923352710980?text=Assalam%20o%20Alaikum!%20Mujhe%20GEYSER%20REPAIR%20chahiye.%20Naam%3A%20___%20%7C%20Address%3A%20___">Book Karein</a></div>
+    <div class="card"><div class="pic"><img src="https://upload.wikimedia.org/wikipedia/commons/f/fb/Locksmith_fixing_a_lock.jpg" alt="Locksmith" loading="lazy" onerror="this.parentNode.style.display='none'"></div><div class="icon">🔑</div><h3>Locksmith</h3><p>Tala khulwana, naya tala lagwana</p><a class="book" href="https://wa.me/923352710980?text=Assalam%20o%20Alaikum!%20Mujhe%20LOCKSMITH%20chahiye.%20Naam%3A%20___%20%7C%20Address%3A%20___">Book Karein</a></div>
+    <div class="card"><div class="pic"><img src="https://upload.wikimedia.org/wikipedia/commons/0/0a/Dish_antenna_satellite_dish.jpg" alt="Dish Antenna Setting" loading="lazy" onerror="this.parentNode.style.display='none'"></div><div class="icon">📡</div><h3>Dish Antenna Setting</h3><p>Dish/LNB setting aur repair</p><a class="book" href="https://wa.me/923352710980?text=Assalam%20o%20Alaikum!%20Mujhe%20DISH%20ANTENNA%20SETTING%20chahiye.%20Naam%3A%20___%20%7C%20Address%3A%20___">Book Karein</a></div>
+    <div class="card"><div class="pic"><img src="https://upload.wikimedia.org/wikipedia/commons/d/dc/Diesel_Generators.jpg" alt="UPS / Generator Repair" loading="lazy" onerror="this.parentNode.style.display='none'"></div><div class="icon">🔌</div><h3>UPS / Generator Repair</h3><p>UPS aur generator theek karwayein</p><a class="book" href="https://wa.me/923352710980?text=Assalam%20o%20Alaikum!%20Mujhe%20UPS%20%2F%20GENERATOR%20REPAIR%20chahiye.%20Naam%3A%20___%20%7C%20Address%3A%20___">Book Karein</a></div>
+    <div class="card"><div class="pic"><img src="https://upload.wikimedia.org/wikipedia/commons/8/8e/Bricklayer.jpg" alt="Mason (Mistri)" loading="lazy" onerror="this.parentNode.style.display='none'"></div><div class="icon">🧱</div><h3>Mason (Mistri)</h3><p>Deewar, farsh ke chhote kaam</p><a class="book" href="https://wa.me/923352710980?text=Assalam%20o%20Alaikum!%20Mujhe%20MASON%20(MISTRI)%20chahiye.%20Naam%3A%20___%20%7C%20Address%3A%20___">Book Karein</a></div>
+    <div class="card"><div class="pic"><img src="https://upload.wikimedia.org/wikipedia/commons/d/d6/Suspended-ceiling-0a.jpg" alt="False Ceiling" loading="lazy" onerror="this.parentNode.style.display='none'"></div><div class="icon">🔲</div><h3>False Ceiling</h3><p>Design wali false ceiling — mazboot aur khubsurat</p><a class="book" href="https://wa.me/923352710980?text=Assalam%20o%20Alaikum!%20Mujhe%20FALSE%20CEILING%20chahiye.%20Naam%3A%20___%20%7C%20Address%3A%20___">Book Karein</a></div>
+    <div class="card"><div class="pic"><img src="https://cdn.shopify.com/s/files/1/0955/0836/5444/files/N102PW_new_main-scaled.jpg" alt="PVC Ceiling" loading="lazy" onerror="this.parentNode.style.display='none'"></div><div class="icon">🟦</div><h3>PVC Ceiling</h3><p>PVC panel ceiling — pani aur seelan se mehfooz</p><a class="book" href="https://wa.me/923352710980?text=Assalam%20o%20Alaikum!%20Mujhe%20PVC%20CEILING%20chahiye.%20Naam%3A%20___%20%7C%20Address%3A%20___">Book Karein</a></div>
+    <div class="card"><div class="pic"><img src="https://www.nobroker.in/blog/wp-content/uploads/2026/05/Geometric-Coffered-Gypsum-Ceiling-1200x673.webp" alt="Gypsum Board Ceiling" loading="lazy" onerror="this.parentNode.style.display='none'"></div><div class="icon">⬜</div><h3>Gypsum Board Ceiling</h3><p>Gypsum board ceiling — smooth aur modern finish</p><a class="book" href="https://wa.me/923352710980?text=Assalam%20o%20Alaikum!%20Mujhe%20GYPSUM%20BOARD%20CEILING%20chahiye.%20Naam%3A%20___%20%7C%20Address%3A%20___">Book Karein</a></div>
+    <div class="card"><div class="pic"><img src="https://www.nobroker.in/blog/wp-content/uploads/2026/05/Single-Layer-False-Ceiling-Gypsum-or-POP-1200x673.webp" alt="POP Ceiling" loading="lazy" onerror="this.parentNode.style.display='none'"></div><div class="icon">🔳</div><h3>POP Ceiling</h3><p>POP (Plaster of Paris) design wali ceiling</p><a class="book" href="https://wa.me/923352710980?text=Assalam%20o%20Alaikum!%20Mujhe%20POP%20CEILING%20chahiye.%20Naam%3A%20___%20%7C%20Address%3A%20___">Book Karein</a></div>
+    <div class="card"><div class="pic"><img src="https://diyallday.com/wp-content/uploads/2020/05/a-man-applying-ceiling-plaster-ee220805-960x560.jpg.webp" alt="Simple Ceiling Repair" loading="lazy" onerror="this.parentNode.style.display='none'"></div><div class="icon">🛠️</div><h3>Simple Ceiling Repair</h3><p>Purani ceiling ki repair, putty aur paint</p><a class="book" href="https://wa.me/923352710980?text=Assalam%20o%20Alaikum!%20Mujhe%20SIMPLE%20CEILING%20REPAIR%20chahiye.%20Naam%3A%20___%20%7C%20Address%3A%20___">Book Karein</a></div>
   </div>
 
   <h2 id="safai">🧹 Safai & Care</h2>
   <p class="cat-sub">Ghar, gari aur kapron ki dekh bhal</p>
   <div class="grid">
-    <div class="card"><div class="icon">🧹</div><h3>Home Cleaning</h3><p>Poore ghar ki safai — deep cleaning</p><a class="book" href="https://wa.me/923352710980?text=Assalam%20o%20Alaikum!%20Mujhe%20HOME%20CLEANING%20chahiye.%20Naam%3A%20___%20%7C%20Address%3A%20___">Book Karein</a></div>
-    <div class="card"><div class="icon">🐜</div><h3>Pest Control</h3><p>Choohon aur keeron ka spray</p><a class="book" href="https://wa.me/923352710980?text=Assalam%20o%20Alaikum!%20Mujhe%20PEST%20CONTROL%20chahiye.%20Naam%3A%20___%20%7C%20Address%3A%20___">Book Karein</a></div>
-    <div class="card"><div class="icon">👕</div><h3>Laundry Pickup & Delivery</h3><p>Kapre ghar se le jayein, dhul kar wapas</p><a class="book" href="https://wa.me/923352710980?text=Assalam%20o%20Alaikum!%20Mujhe%20LAUNDRY%20PICKUP%20chahiye.%20Naam%3A%20___%20%7C%20Address%3A%20___">Book Karein</a></div>
-    <div class="card"><div class="icon">🚗</div><h3>Car Wash at Home</h3><p>Ghar baithe gari chamkayein</p><a class="book" href="https://wa.me/923352710980?text=Assalam%20o%20Alaikum!%20Mujhe%20CAR%20WASH%20chahiye.%20Naam%3A%20___%20%7C%20Address%3A%20___">Book Karein</a></div>
-    <div class="card"><div class="icon">🌿</div><h3>Gardener</h3><p>Lawn aur plants ki dekh bhal</p><a class="book" href="https://wa.me/923352710980?text=Assalam%20o%20Alaikum!%20Mujhe%20GARDENER%20chahiye.%20Naam%3A%20___%20%7C%20Address%3A%20___">Book Karein</a></div>
-    <div class="card"><div class="icon">🧹</div><h3>Sweeper</h3><p>Ghar/office ki jharoo-pocha safai</p><a class="book" href="https://wa.me/923352710980?text=Assalam%20o%20Alaikum!%20Mujhe%20SWEEPER%20chahiye.%20Naam%3A%20___%20%7C%20Address%3A%20___">Book Karein</a></div>
-    <div class="card"><div class="icon">🕳️</div><h3>Naali / Sewer Safai</h3><p>Band naali aur sewer line khulwayein</p><a class="book" href="https://wa.me/923352710980?text=Assalam%20o%20Alaikum!%20Mujhe%20NAALI%20%2F%20SEWER%20SAFAI%20chahiye.%20Naam%3A%20___%20%7C%20Address%3A%20___">Book Karein</a></div>
-    <div class="card"><div class="icon">💧</div><h3>Water Tank Safai</h3><p>Pani ki tanki ki mukammal safai</p><a class="book" href="https://wa.me/923352710980?text=Assalam%20o%20Alaikum!%20Mujhe%20WATER%20TANK%20SAFAI%20chahiye.%20Naam%3A%20___%20%7C%20Address%3A%20___">Book Karein</a></div>
-    <div class="card"><div class="icon">👞</div><h3>Mochi</h3><p>Jooton ki marammat — ghar se pickup</p><a class="book" href="https://wa.me/923352710980?text=Assalam%20o%20Alaikum!%20Mujhe%20MOCHI%20chahiye.%20Naam%3A%20___%20%7C%20Address%3A%20___">Book Karein</a></div>
-    <div class="card"><div class="icon">💈</div><h3>Home Barber</h3><p>Ghar par hajamat — mardon ke liye</p><a class="book" href="https://wa.me/923352710980?text=Assalam%20o%20Alaikum!%20Mujhe%20HOME%20BARBER%20chahiye.%20Naam%3A%20___%20%7C%20Address%3A%20___">Book Karein</a></div>
+    <div class="card"><div class="pic"><img src="https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=800&amp;q=80" alt="Home Cleaning" loading="lazy" onerror="this.parentNode.style.display='none'"></div><div class="icon">🧹</div><h3>Home Cleaning</h3><p>Poore ghar ki safai — deep cleaning</p><a class="book" href="https://wa.me/923352710980?text=Assalam%20o%20Alaikum!%20Mujhe%20HOME%20CLEANING%20chahiye.%20Naam%3A%20___%20%7C%20Address%3A%20___">Book Karein</a></div>
+    <div class="card"><div class="pic"><img src="https://ppvs-fm.com/wp-content/uploads/iStock-928077000.jpg" alt="Pest Control" loading="lazy" onerror="this.parentNode.style.display='none'"></div><div class="icon">🐜</div><h3>Pest Control</h3><p>Choohon aur keeron ka spray</p><a class="book" href="https://wa.me/923352710980?text=Assalam%20o%20Alaikum!%20Mujhe%20PEST%20CONTROL%20chahiye.%20Naam%3A%20___%20%7C%20Address%3A%20___">Book Karein</a></div>
+    <div class="card"><div class="pic"><img src="https://images.unsplash.com/photo-1545173168-9f1947eebb7f?w=800&amp;q=80" alt="Laundry Pickup &amp; Delivery" loading="lazy" onerror="this.parentNode.style.display='none'"></div><div class="icon">👕</div><h3>Laundry Pickup & Delivery</h3><p>Kapre ghar se le jayein, dhul kar wapas</p><a class="book" href="https://wa.me/923352710980?text=Assalam%20o%20Alaikum!%20Mujhe%20LAUNDRY%20PICKUP%20chahiye.%20Naam%3A%20___%20%7C%20Address%3A%20___">Book Karein</a></div>
+    <div class="card"><div class="pic"><img src="https://images.airtasker.com/v7/https://airtasker-seo-assets-prod.s3.amazonaws.com/en_AU/1731482431199-man-washing-car.jpg?w=768&amp;func=bound&amp;org_if_sml=1" alt="Car Wash at Home" loading="lazy" onerror="this.parentNode.style.display='none'"></div><div class="icon">🚗</div><h3>Car Wash at Home</h3><p>Ghar baithe gari chamkayein</p><a class="book" href="https://wa.me/923352710980?text=Assalam%20o%20Alaikum!%20Mujhe%20CAR%20WASH%20chahiye.%20Naam%3A%20___%20%7C%20Address%3A%20___">Book Karein</a></div>
+    <div class="card"><div class="pic"><img src="https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=800&amp;q=80" alt="Gardener" loading="lazy" onerror="this.parentNode.style.display='none'"></div><div class="icon">🌿</div><h3>Gardener</h3><p>Lawn aur plants ki dekh bhal</p><a class="book" href="https://wa.me/923352710980?text=Assalam%20o%20Alaikum!%20Mujhe%20GARDENER%20chahiye.%20Naam%3A%20___%20%7C%20Address%3A%20___">Book Karein</a></div>
+    <div class="card"><div class="pic"><img src="https://img.myloview.com/stickers/young-male-street-sweeper-700-191856496.jpg" alt="Sweeper" loading="lazy" onerror="this.parentNode.style.display='none'"></div><div class="icon">🧹</div><h3>Sweeper</h3><p>Ghar/office ki jharoo-pocha safai</p><a class="book" href="https://wa.me/923352710980?text=Assalam%20o%20Alaikum!%20Mujhe%20SWEEPER%20chahiye.%20Naam%3A%20___%20%7C%20Address%3A%20___">Book Karein</a></div>
+    <div class="card"><div class="pic"><img src="https://chamblissplumbing.com/wp-content/uploads/2024/03/commercial-plumber-unclogging-drain.jpg" alt="Naali / Sewer Safai" loading="lazy" onerror="this.parentNode.style.display='none'"></div><div class="icon">🕳️</div><h3>Naali / Sewer Safai</h3><p>Band naali aur sewer line khulwayein</p><a class="book" href="https://wa.me/923352710980?text=Assalam%20o%20Alaikum!%20Mujhe%20NAALI%20%2F%20SEWER%20SAFAI%20chahiye.%20Naam%3A%20___%20%7C%20Address%3A%20___">Book Karein</a></div>
+    <div class="card"><div class="pic"><img src="https://megameter.ae/wp-content/uploads/2026/03/Megameter-technician-cleaning-inside-a-water-tank.jpg" alt="Water Tank Safai" loading="lazy" onerror="this.parentNode.style.display='none'"></div><div class="icon">💧</div><h3>Water Tank Safai</h3><p>Pani ki tanki ki mukammal safai</p><a class="book" href="https://wa.me/923352710980?text=Assalam%20o%20Alaikum!%20Mujhe%20WATER%20TANK%20SAFAI%20chahiye.%20Naam%3A%20___%20%7C%20Address%3A%20___">Book Karein</a></div>
+    <div class="card"><div class="pic"><img src="https://images.pexels.com/photos/27697060/pexels-photo-27697060.jpeg?cs=srgb&amp;dl=pexels-mehmetkaraca-27697060.jpg&amp;fm=jpg" alt="Mochi" loading="lazy" onerror="this.parentNode.style.display='none'"></div><div class="icon">👞</div><h3>Mochi</h3><p>Jooton ki marammat — ghar se pickup</p><a class="book" href="https://wa.me/923352710980?text=Assalam%20o%20Alaikum!%20Mujhe%20MOCHI%20chahiye.%20Naam%3A%20___%20%7C%20Address%3A%20___">Book Karein</a></div>
+    <div class="card"><div class="pic"><img src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=800&amp;q=80" alt="Home Barber" loading="lazy" onerror="this.parentNode.style.display='none'"></div><div class="icon">💈</div><h3>Home Barber</h3><p>Ghar par hajamat — mardon ke liye</p><a class="book" href="https://wa.me/923352710980?text=Assalam%20o%20Alaikum!%20Mujhe%20HOME%20BARBER%20chahiye.%20Naam%3A%20___%20%7C%20Address%3A%20___">Book Karein</a></div>
   </div>
 
   <h2 id="taleem">📚 Taleem</h2>
   <p class="cat-sub">Ghar baithe parhai — bachon aur baron ke liye</p>
   <div class="grid">
-    <div class="card"><div class="icon">📚</div><h3>Home Tuition</h3><p>Ghar par teacher — har subject, har class</p><a class="book" href="https://wa.me/923352710980?text=Assalam%20o%20Alaikum!%20Mujhe%20HOME%20TUITION%20chahiye.%20Naam%3A%20___%20%7C%20Address%3A%20___">Book Karein</a></div>
-    <div class="card"><div class="icon">📖</div><h3>Quran Teacher</h3><p>Ghar par ya online Quran parhayein</p><a class="book" href="https://wa.me/923352710980?text=Assalam%20o%20Alaikum!%20Mujhe%20QURAN%20TEACHER%20chahiye.%20Naam%3A%20___%20%7C%20Address%3A%20___">Book Karein</a></div>
-    <div class="card"><div class="icon">💻</div><h3>Computer Teacher</h3><p>Computer seekhein ghar baithe</p><a class="book" href="https://wa.me/923352710980?text=Assalam%20o%20Alaikum!%20Mujhe%20COMPUTER%20TEACHER%20chahiye.%20Naam%3A%20___%20%7C%20Address%3A%20___">Book Karein</a></div>
-    <div class="card"><div class="icon">🗣️</div><h3>English Language Tutor</h3><p>English speaking aur language course</p><a class="book" href="https://wa.me/923352710980?text=Assalam%20o%20Alaikum!%20Mujhe%20ENGLISH%20TUTOR%20chahiye.%20Naam%3A%20___%20%7C%20Address%3A%20___">Book Karein</a></div>
-    <div class="card"><div class="icon">📱</div><h3>Computer & Mobile Training</h3><p>Mobile/computer ki basic training</p><a class="book" href="https://wa.me/923352710980?text=Assalam%20o%20Alaikum!%20Mujhe%20COMPUTER%20%2F%20MOBILE%20TRAINING%20chahiye.%20Naam%3A%20___%20%7C%20Address%3A%20___">Book Karein</a></div>
+    <div class="card"><div class="pic"><img src="https://tuitionreview.com/wp-content/uploads/2025/04/cute-boy-doing-his-school-homework-with-his-mother-home-he-is-writing-book_1249-488.jpg" alt="Home Tuition" loading="lazy" onerror="this.parentNode.style.display='none'"></div><div class="icon">📚</div><h3>Home Tuition</h3><p>Ghar par teacher — har subject, har class</p><a class="book" href="https://wa.me/923352710980?text=Assalam%20o%20Alaikum!%20Mujhe%20HOME%20TUITION%20chahiye.%20Naam%3A%20___%20%7C%20Address%3A%20___">Book Karein</a></div>
+    <div class="card"><div class="pic"><img src="https://alnajamonlinequranacademy.com/wp-content/uploads/2026/08/How-to-Teach-Quran-to-Kids-at-Home.jpg" alt="Quran Teacher" loading="lazy" onerror="this.parentNode.style.display='none'"></div><div class="icon">📖</div><h3>Quran Teacher</h3><p>Ghar par ya online Quran parhayein</p><a class="book" href="https://wa.me/923352710980?text=Assalam%20o%20Alaikum!%20Mujhe%20QURAN%20TEACHER%20chahiye.%20Naam%3A%20___%20%7C%20Address%3A%20___">Book Karein</a></div>
+    <div class="card"><div class="pic"><img src="https://www.thechangeindia.org/gallery/computer-class.jpg" alt="Computer Teacher" loading="lazy" onerror="this.parentNode.style.display='none'"></div><div class="icon">💻</div><h3>Computer Teacher</h3><p>Computer seekhein ghar baithe</p><a class="book" href="https://wa.me/923352710980?text=Assalam%20o%20Alaikum!%20Mujhe%20COMPUTER%20TEACHER%20chahiye.%20Naam%3A%20___%20%7C%20Address%3A%20___">Book Karein</a></div>
+    <div class="card"><div class="pic"><img src="https://actiontutoring.org.uk/wp-content/uploads/2023/10/AT_051219_026-1024x682.jpg" alt="English Language Tutor" loading="lazy" onerror="this.parentNode.style.display='none'"></div><div class="icon">🗣️</div><h3>English Language Tutor</h3><p>English speaking aur language course</p><a class="book" href="https://wa.me/923352710980?text=Assalam%20o%20Alaikum!%20Mujhe%20ENGLISH%20TUTOR%20chahiye.%20Naam%3A%20___%20%7C%20Address%3A%20___">Book Karein</a></div>
+    <div class="card"><div class="pic"><img src="https://cdn.prod.website-files.com/6436928f426a2c5cf48b71c5/6437c74a459aa03c14f5d19c_senior-people-learnng-use-laptop.jpg" alt="Computer &amp; Mobile Training" loading="lazy" onerror="this.parentNode.style.display='none'"></div><div class="icon">📱</div><h3>Computer & Mobile Training</h3><p>Mobile/computer ki basic training</p><a class="book" href="https://wa.me/923352710980?text=Assalam%20o%20Alaikum!%20Mujhe%20COMPUTER%20%2F%20MOBILE%20TRAINING%20chahiye.%20Naam%3A%20___%20%7C%20Address%3A%20___">Book Karein</a></div>
   </div>
 
   <h2 id="sehat">🏥 Sehat</h2>
   <p class="cat-sub">Ghar par medical care — sehat ka khayal, ghar baithe</p>
   <div class="grid">
-    <div class="card"><div class="icon">🏥</div><h3>Physiotherapist</h3><p>Ghar par physiotherapy — dard aur chot ka ilaj</p><a class="book" href="https://wa.me/923352710980?text=Assalam%20o%20Alaikum!%20Mujhe%20PHYSIOTHERAPIST%20chahiye.%20Naam%3A%20___%20%7C%20Address%3A%20___">Book Karein</a></div>
-    <div class="card"><div class="icon">💉</div><h3>Home Nurse</h3><p>Ghar par injection, cannula, drip — trained nurse</p><a class="book" href="https://wa.me/923352710980?text=Assalam%20o%20Alaikum!%20Mujhe%20HOME%20NURSE%20chahiye.%20Naam%3A%20___%20%7C%20Address%3A%20___">Book Karein</a></div>
+    <div class="card"><div class="pic"><img src="https://images.pexels.com/photos/6973123/pexels-photo-6973123.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=800" alt="Physiotherapist" loading="lazy" onerror="this.parentNode.style.display='none'"></div><div class="icon">🏥</div><h3>Physiotherapist</h3><p>Ghar par physiotherapy — dard aur chot ka ilaj</p><a class="book" href="https://wa.me/923352710980?text=Assalam%20o%20Alaikum!%20Mujhe%20PHYSIOTHERAPIST%20chahiye.%20Naam%3A%20___%20%7C%20Address%3A%20___">Book Karein</a></div>
+    <div class="card"><div class="pic"><img src="https://www.iwvoice.com/wp-content/uploads/2026/03/caregiver-elderly-patient-in-home-care-senior-citizen-nurse.jpg" alt="Home Nurse" loading="lazy" onerror="this.parentNode.style.display='none'"></div><div class="icon">💉</div><h3>Home Nurse</h3><p>Ghar par injection, cannula, drip — trained nurse</p><a class="book" href="https://wa.me/923352710980?text=Assalam%20o%20Alaikum!%20Mujhe%20HOME%20NURSE%20chahiye.%20Naam%3A%20___%20%7C%20Address%3A%20___">Book Karein</a></div>
   </div>
 
   <h2 id="ghar">🏠 Ghar ke Kaam</h2>
   <p class="cat-sub">Rozmarra ke kaam, asaan tareeqe se</p>
   <div class="grid">
-    <div class="card"><div class="icon">🍳</div><h3>Home Cook</h3><p>Ghar ka khana banane wala cook</p><a class="book" href="https://wa.me/923352710980?text=Assalam%20o%20Alaikum!%20Mujhe%20HOME%20COOK%20chahiye.%20Naam%3A%20___%20%7C%20Address%3A%20___">Book Karein</a></div>
-    <div class="card"><div class="icon">🚚</div><h3>Home Shifting & Loader</h3><p>Ghar ka saman shift karna, loader booking</p><a class="book" href="https://wa.me/923352710980?text=Assalam%20o%20Alaikum!%20Mujhe%20HOME%20SHIFTING%20%2F%20LOADER%20chahiye.%20Naam%3A%20___%20%7C%20Address%3A%20___">Book Karein</a></div>
-    <div class="card"><div class="icon">🎉</div><h3>Event Decoration</h3><p>Shadi/daqwat ki decoration ghar par</p><a class="book" href="https://wa.me/923352710980?text=Assalam%20o%20Alaikum!%20Mujhe%20EVENT%20DECORATION%20chahiye.%20Naam%3A%20___%20%7C%20Address%3A%20___">Book Karein</a></div>
-    <div class="card"><div class="icon">📸</div><h3>Photographer & Videographer</h3><p>Event ki photography aur videography</p><a class="book" href="https://wa.me/923352710980?text=Assalam%20o%20Alaikum!%20Mujhe%20PHOTOGRAPHER%20chahiye.%20Naam%3A%20___%20%7C%20Address%3A%20___">Book Karein</a></div>
+    <div class="card"><div class="pic"><img src="https://www.copcas.co.za/wp-content/uploads/2023/03/Blog-April2023-02.jpg" alt="Home Cook" loading="lazy" onerror="this.parentNode.style.display='none'"></div><div class="icon">🍳</div><h3>Home Cook</h3><p>Ghar ka khana banane wala cook</p><a class="book" href="https://wa.me/923352710980?text=Assalam%20o%20Alaikum!%20Mujhe%20HOME%20COOK%20chahiye.%20Naam%3A%20___%20%7C%20Address%3A%20___">Book Karein</a></div>
+    <div class="card"><div class="pic"><img src="https://images.pexels.com/photos/6169059/pexels-photo-6169059.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=800" alt="Home Shifting &amp; Loader" loading="lazy" onerror="this.parentNode.style.display='none'"></div><div class="icon">🚚</div><h3>Home Shifting & Loader</h3><p>Ghar ka saman shift karna, loader booking</p><a class="book" href="https://wa.me/923352710980?text=Assalam%20o%20Alaikum!%20Mujhe%20HOME%20SHIFTING%20%2F%20LOADER%20chahiye.%20Naam%3A%20___%20%7C%20Address%3A%20___">Book Karein</a></div>
+    <div class="card"><div class="pic"><img src="https://static.vecteezy.com/system/resources/thumbnails/068/030/676/small/luxurious-wedding-stage-decorated-with-flowers-and-drapes-awaiting-the-couple-photo.jpg" alt="Event Decoration" loading="lazy" onerror="this.parentNode.style.display='none'"></div><div class="icon">🎉</div><h3>Event Decoration</h3><p>Shadi/daqwat ki decoration ghar par</p><a class="book" href="https://wa.me/923352710980?text=Assalam%20o%20Alaikum!%20Mujhe%20EVENT%20DECORATION%20chahiye.%20Naam%3A%20___%20%7C%20Address%3A%20___">Book Karein</a></div>
+    <div class="card"><div class="pic"><img src="https://images.pexels.com/photos/1380681/pexels-photo-1380681.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=800" alt="Photographer &amp; Videographer" loading="lazy" onerror="this.parentNode.style.display='none'"></div><div class="icon">📸</div><h3>Photographer & Videographer</h3><p>Event ki photography aur videography</p><a class="book" href="https://wa.me/923352710980?text=Assalam%20o%20Alaikum!%20Mujhe%20PHOTOGRAPHER%20chahiye.%20Naam%3A%20___%20%7C%20Address%3A%20___">Book Karein</a></div>
   </div>
 
   <h2>Kaam Kaise Hoga? (4 Aasan Steps)</h2>
@@ -158,5 +285,19 @@
 </div>
 
 <footer>GharTasalli — 🏠 Tasalli se ghar ke kaam<br><span style="font-size:.8rem;">Ghar Baithe Verified Karigar 🛠️ | Pakistan</span><br><a href="admin.html" style="color:#bbb; font-size:.75rem; text-decoration:none;">Admin</a></footer>
+
+<script>
+function openDrawer(){ document.getElementById('drawer').classList.add('open'); document.getElementById('drawerOverlay').classList.add('show'); }
+function closeDrawer(){ document.getElementById('drawer').classList.remove('open'); document.getElementById('drawerOverlay').classList.remove('show'); }
+function goHome(){ closeDrawer(); closePages(); window.scrollTo({top:0,behavior:'smooth'}); }
+function openSettings(){ closeDrawer(); closePages(); document.getElementById('settingsPage').classList.add('show'); }
+function openContact(){ closeDrawer(); closePages(); document.getElementById('contactPage').classList.add('show'); }
+function closePages(){ document.querySelectorAll('.page-overlay').forEach(function(p){ p.classList.remove('show'); }); }
+var CITY_KEY='ghartasalli_city';
+function applyCity(c){ if(!c) return; document.querySelectorAll('a.book').forEach(function(a){ var href=a.getAttribute('href').replace(/%20%7C%20Sheher%3A%20[^&]*/,''); a.href=href+'%20%7C%20Sheher%3A%20'+encodeURIComponent(c); }); }
+function saveCity(){ var c=document.getElementById('citySel').value; if(!c){ alert('Pehle sheher chunein!'); return; } try{ localStorage.setItem(CITY_KEY,c); }catch(e){} applyCity(c); alert('Sheher save ho gaya! ✅'); }
+function shareApp(){ var d={title:'GharTasalli',text:'GharTasalli — Ghar Baithe Verified Karigar! 🛠️ Sirf 150 booking fee.',url:'https://gharthak312-droid.github.io/ghartasalli/'}; if(navigator.share){ navigator.share(d).catch(function(){}); } else if(navigator.clipboard){ navigator.clipboard.writeText(d.text+' '+d.url).then(function(){ alert('Link copy ho gaya — ab share karein! ✅'); }); } else { prompt('Ye link copy karke share karein:', d.url); } }
+(function(){ try{ var c=localStorage.getItem(CITY_KEY); if(c){ document.getElementById('citySel').value=c; applyCity(c); } }catch(e){} })();
+</script>
 </body>
 </html>
