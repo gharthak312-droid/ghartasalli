@@ -30,6 +30,7 @@
   .btn.red { background:#e05252; } .btn.red:hover { background:#c74444; }
   .btn.small { padding:7px 14px; font-size:.85rem; margin:4px 4px 0 0; }
   .btn.grey { background:#888; }
+  .btn.orange { background:#e8a13c; } .btn.orange:hover { background:#d18f2e; }
   .wcard { border-left:4px solid #c62828; }
   .wcard.inactive { opacity:.55; border-left-color:#aaa; }
   .wcard .nm { font-weight:bold; font-size:1.1rem; }
@@ -60,6 +61,7 @@
     <h2>🔒 Private Panel</h2>
     <p>Sirf admin ke liye — PIN dalein<br><span style="font-size:.78rem">(pehli baar: 1234)</span></p>
     <input type="password" id="pinInput" maxlength="8" inputmode="numeric" placeholder="••••">
+    <p id="pinErr" class="hint" style="display:none;color:#c62828;font-weight:bold;"></p>
     <button class="btn" style="width:100%" onclick="unlock()">Kholein</button>
     <p class="hint">PIN badalne ke liye Dashboard me "PIN badlein" dabayein.</p>
   </div>
@@ -88,9 +90,19 @@
     </div>
     <div class="card">
       <h3>⚙️ Settings</h3>
-      <button class="btn small grey" onclick="changePin()">PIN badlein</button>
+      <button class="btn small grey" onclick="togglePinForm()">PIN badlein</button>
+      <button class="btn small orange" id="resetPinBtn" onclick="resetPin(this)">PIN reset karein (1234)</button>
       <button class="btn small red" onclick="resetAll()">Sara data delete karein</button>
-      <p class="hint">Data isi browser me save hota hai. Dusre phone/computer par chalane ke liye baad me online database lagayenge.</p>
+      <div id="pinForm" style="display:none; margin-top:12px; border-top:1px solid #eee; padding-top:12px;">
+        <div><label>Maujooda PIN</label><input type="password" id="pinOld" maxlength="8" inputmode="numeric" placeholder="••••"></div>
+        <div class="row">
+          <div><label>Naya PIN (4-8 digits)</label><input type="password" id="pinNew" maxlength="8" inputmode="numeric" placeholder="••••"></div>
+          <div><label>Naya PIN dobara likhein</label><input type="password" id="pinNew2" maxlength="8" inputmode="numeric" placeholder="••••"></div>
+        </div>
+        <button class="btn small" onclick="doChangePin()">Save karein</button>
+        <p id="pinMsg" class="hint" style="display:none;font-weight:bold;"></p>
+      </div>
+      <p class="hint">PIN reset sirf PIN ko 1234 karega — karigar aur bookings ka data mehfooz rahega. "Sara data delete" se sab kuch delete ho jayega. Data isi browser me save hota hai.</p>
     </div>
   </div>
 
@@ -145,7 +157,7 @@
 </div>
 
 <script>
-const SERVICES = ["Plumber","Electrician","AC & Fridge Repair","Washing Machine Repair","Carpenter","Furniture Installation","Mobile & Computer Repair","RO Filter Service","Solar Panel Service","CCTV Installation","Internet & Wi-Fi Installation","Geyser Repair","Locksmith","Dish Antenna Setting","UPS / Generator Repair","Mason (Mistri)","Home Cleaning","Pest Control","Laundry Pickup & Delivery","Car Wash at Home","Gardener","Sweeper","Naali / Sewer Safai","Water Tank Safai","Mochi","Home Barber","Home Tuition","Quran Teacher","Computer Teacher","English Language Tutor","Computer & Mobile Training","Home Cook","Home Shifting & Loader","Event Decoration","Photographer & Videographer"];
+const SERVICES = ["Plumber","Electrician","AC & Fridge Repair","Washing Machine Repair","Carpenter","Furniture Installation","Mobile & Computer Repair","RO Filter Service","Solar Panel Service","CCTV Installation","Internet & Wi-Fi Installation","Geyser Repair","Locksmith","Dish Antenna Setting","UPS / Generator Repair","Mason (Mistri)","False Ceiling","PVC Ceiling","Gypsum Board Ceiling","POP Ceiling","Simple Ceiling Repair","Home Cleaning","Pest Control","Laundry Pickup & Delivery","Car Wash at Home","Gardener","Sweeper","Naali / Sewer Safai","Water Tank Safai","Mochi","Home Barber","Home Tuition","Quran Teacher","Computer Teacher","English Language Tutor","Computer & Mobile Training","Home Cook","Home Shifting & Loader","Event Decoration","Photographer & Videographer","Physiotherapist","Home Nurse"];
 const KEY = "kaamwala_admin_v1";
 let DB = load();
 function load(){ try { const d = JSON.parse(localStorage.getItem(KEY)); if(d && d.workers) return d; } catch(e){} return {workers:[], bookings:[], pin:"1234"}; }
@@ -155,9 +167,23 @@ function esc(s){ return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,
 function waNum(n){ n = String(n||"").replace(/\D/g,""); if(n.startsWith("0")) n = "92"+n.slice(1); if(n.startsWith("92") && n.length>=11) return n; return ""; }
 
 // PIN
-function unlock(){ const v = document.getElementById("pinInput").value; if(v === DB.pin){ document.getElementById("pinScreen").style.display="none"; } else { alert("Ghalat PIN!"); } }
+function unlock(){ const v = document.getElementById("pinInput").value; if(v === DB.pin){ document.getElementById("pinScreen").style.display="none"; document.getElementById("pinErr").style.display="none"; document.getElementById("pinInput").value=""; } else { const e=document.getElementById("pinErr"); e.textContent="Ghalat PIN! Dobara try karein."; e.style.display="block"; } }
 document.getElementById("pinInput").addEventListener("keydown", e=>{ if(e.key==="Enter") unlock(); });
-function changePin(){ const p = prompt("Naya PIN likhein (4-8 digits):"); if(p && /^\d{4,8}$/.test(p)){ DB.pin=p; save(); alert("PIN badal gaya!"); } else if(p!==null){ alert("PIN 4-8 digits ka hona chahiye."); } }
+function togglePinForm(){ const f=document.getElementById("pinForm"); const open=f.style.display!=="none"; f.style.display=open?"none":"block"; if(!open){ document.getElementById("pinMsg").style.display="none"; } }
+function pinMsg(t, ok){ const m=document.getElementById("pinMsg"); m.textContent=t; m.style.display="block"; m.style.color=ok?"#1e7e34":"#c62828"; }
+function doChangePin(){
+  const old=document.getElementById("pinOld").value.trim(), n1=document.getElementById("pinNew").value.trim(), n2=document.getElementById("pinNew2").value.trim();
+  if(old!==DB.pin){ pinMsg("Maujooda PIN ghalat hai!", false); return; }
+  if(!/^\d{4,8}$/.test(n1)){ pinMsg("Naya PIN 4-8 digits ka hona chahiye.", false); return; }
+  if(n1!==n2){ pinMsg("Dono naye PIN aapas me match nahi ho rahe.", false); return; }
+  DB.pin=n1; save();
+  document.getElementById("pinOld").value=""; document.getElementById("pinNew").value=""; document.getElementById("pinNew2").value="";
+  pinMsg("PIN badal gaya! ✅ Naya PIN yaad rakhein.", true);
+}
+function resetPin(btn){
+  if(btn.dataset.armed){ DB.pin="1234"; save(); delete btn.dataset.armed; btn.textContent="PIN reset karein (1234)"; document.getElementById("pinForm").style.display="block"; pinMsg("PIN reset ho gaya! Ab PIN 1234 hai. (Karigar aur bookings ka data mehfooz hai ✅)", true); }
+  else { btn.dataset.armed="1"; btn.textContent="Pakka? Dobara dabayein"; setTimeout(()=>{ if(btn.dataset.armed){ delete btn.dataset.armed; btn.textContent="PIN reset karein (1234)"; } }, 5000); }
+}
 function resetAll(){ if(confirm("SARA data delete ho jayega! Pakka?")){ localStorage.removeItem(KEY); location.reload(); } }
 
 // Tabs
